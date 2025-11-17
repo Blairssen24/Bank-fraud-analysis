@@ -179,11 +179,94 @@ These KPIs focus on understanding **transaction volume, performance, and trends*
 
 ---
 
-#### 1. Total Transactions
+#### 1. Total Transactions - How many banking transactions were processed on Friday, January 17, 2025?
 ```sql
 SELECT COUNT(*) AS Total_Transactions
 FROM bank_transactions;
 ```
+> total number of all banking transactions recorded on Friday, January 17, 2025..
+
+#### 2. Total Number of Transactions
+```sql
+SELECT SUM([Transaction_Amount]) AS Total_Transaction_Amount
+FROM bank_transactions;
+```
+> Total Number of Transactions represents how many individual banking transactions were processed in the dataset.
+
+#### 3. Transaction Count by Status - How many transactions fall under each status (Success or Failed) on Friday, January 17, 2025?
+```sql
+SELECT 
+    [Transaction_Status], 
+    COUNT(*) AS Total
+FROM bank_transactions
+GROUP BY [Transaction_Status];
+```
+> This shows how many transactions were successful vs. failed on Friday, January 17, 2025.
+> It helps the bank evaluate system reliability and the rate of failed processing attempts.
+
+#### 4. Transaction Count by Type - How many transactions were performed for each transaction type (Deposit, Withdrawal, Transfer) on Friday, January 17, 2025?
+```sql
+SELECT 
+    Transaction_Type,
+    COUNT(*) AS Total_Transactions,
+    CAST(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM bank_transactions) AS DECIMAL(5,2)) AS Percent_of_Total
+FROM bank_transactions
+GROUP BY Transaction_Type
+ORDER BY Total_Transactions DESC;
+```
+> This query returns the number and percentage share of each transaction type recorded on Friday, January 17, 2025.
+> It helps the bank understand which activities (Deposits, Withdrawals, Transfers) dominate customer behavior and where operational workload is highest.
+
+#### 5. Transaction Count by Fraud Flag - How many transactions on Friday, January 17, 2025 were marked as fraudulent, and what percentage of the total transactions do they represent?
+
+```sql
+SELECT 
+    Fraud_Flag,
+    COUNT(*) AS Total_Transactions,
+    CAST(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM bank_transactions) AS DECIMAL(5,2)) AS Percent_of_Total
+FROM bank_transactions
+GROUP BY Fraud_Flag
+ORDER BY Total_Transactions DESC;
+```
+> 519 non-fraudulent transactions were recorded, representing 51.90% of all banking activities on Friday, January 17, 2025.
+> 481 transactions were fraudulent, making up a high 48.10% — a major red flag.
+> The near 50/50 split indicates an abnormal spike in fraud attempts, suggesting system vulnerabilities, possible coordinated attacks, or weakened authentication/security controls on that day.
+
+#### 6. Network Slice Analysis - Which network slice handled the highest number of transactions on Friday, January 17, 2025?
+
+```sql
+SELECT 
+    Network_Slice_ID, 
+    COUNT(*) AS Total
+FROM bank_transactions
+GROUP BY Network_Slice_ID
+ORDER BY Total DESC;
+```
+> Slice2 processed the highest number of transactions (340), followed closely by Slice3 (337).
+> This indicates a fairly balanced load distribution across slices, with Slice2 carrying slightly more traffic on the dataset’s active date
+
+#### 7. Hourly Transactions Trend - Which network slice handled the highest number of transactions on Friday, January 17, 2025?
+
+```sql
+SELECT 
+    DATEADD(MINUTE, (DATEDIFF(MINUTE, 0, TransactionTime)/15)*15, 0) AS Time_Interval,
+    COUNT(*) AS Total_Transactions
+FROM bank_transactions
+GROUP BY DATEADD(MINUTE, (DATEDIFF(MINUTE, 0, TransactionTime)/15)*15, 0)
+ORDER BY Time_Interval;
+```
+#### 8. Trend by Region - Which network slice handled the highest number of transactions on Friday, January 17, 2025?
+
+```sql
+SELECT 
+    DATEADD(MINUTE, (DATEDIFF(MINUTE, 0, TransactionTime)/15)*15, 0) AS Time_Interval,
+    COUNT(*) AS Total_Transactions
+FROM bank_transactions
+GROUP BY DATEADD(MINUTE, (DATEDIFF(MINUTE, 0, TransactionTime)/15)*15, 0)
+ORDER BY Time_Interval;
+```
+
+### 📌 Fraud Detection KPIs
 
 ---
 
